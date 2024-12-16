@@ -6,11 +6,16 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.navigation.NavController
 import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.week9.ui.view.mahasiswa.DestinasiInsert
+import com.example.week9.ui.view.mahasiswa.DetailMhsView
+import com.example.week9.ui.view.mahasiswa.HomeMhsView
 import com.example.week9.ui.view.mahasiswa.InsertMhsView
+import com.example.week9.ui.view.mahasiswa.UpdateMhsView
 
 @Composable
 fun PengelolaHalaman(
@@ -21,10 +26,75 @@ fun PengelolaHalaman(
         navController = navController, startDestination = DestinasiInsert.route
     ) {
         composable(
-            route = DestinasiInsert.route
+            route = DestinasiHome.route
         ) {
+            HomeMhsView(
+                onDetailClick = { nim ->
+                    navController.navigate("${DestinasiDetail.route}/$nim")
+                    println(
+                        "Pengelola Halaman: nim = $nim"
+                    )
+                },
+                onAddMhs = {
+                    navController.navigate(DestinasiInsert.route)
+                },
+                modifier = modifier
+            )
+        }
+        composable(
+            route = DestinasiInsert.route
+        ){
             InsertMhsView(
-                onBack = {}, onNavigate = { }
+                onBack = {
+                    navController.popBackStack()
+                },
+                onNavigate = {
+                    navController.popBackStack()
+                },
+                modifier = modifier,
+            )
+        }
+
+        composable(
+            DestinasiDetail.routeWithArg,
+            arguments = listOf(
+                navArgument(DestinasiDetail.NIM){
+                    type = NavType.StringType
+                }
+            )
+        ){
+            val nim = it.arguments?.getString(DestinasiDetail.NIM)
+            nim?.let { nim ->
+                DetailMhsView(
+                    onBack = {
+                        navController.popBackStack()
+                    },
+                    onEditClick = {
+                        navController.navigate("${DestinasiUpdate.route}/$it")
+                    },
+                    modifier = modifier,
+                    onDeleteClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+        }
+        composable(
+            DestinasiUpdate.routesWithArg,
+            arguments = listOf(
+                navArgument(DestinasiUpdate.NIM){
+                    type = NavType.StringListType
+                }
+            )
+        ){
+            UpdateMhsView(
+                onBack = {
+                    navController.popBackStack()
+                },
+                onNavigate = {
+                    navController.popBackStack()
+                },
+                modifier = modifier,
             )
         }
     }
