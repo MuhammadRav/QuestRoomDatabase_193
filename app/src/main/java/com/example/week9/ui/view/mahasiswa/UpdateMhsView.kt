@@ -74,7 +74,7 @@ fun UpdateMhsView(
                 onClick = {
                     coroutineScope.launch {
                         if (viewModel.validateFields()) {
-                            viewModel.updateData()
+                            viewModel.UpdateData()
                             delay(600)
                             withContext(Dispatchers.Main){
                                 onNavigate()

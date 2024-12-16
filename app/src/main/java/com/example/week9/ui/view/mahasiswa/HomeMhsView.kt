@@ -1,5 +1,6 @@
 package com.example.week9.ui.view.mahasiswa
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -83,6 +84,7 @@ fun HomeMhsView(
     }
 }
 
+@SuppressLint("RememberReturnType")
 @Composable
 fun BodyHomeMhsView(
     homeUiState: HomeUiState,
@@ -90,7 +92,7 @@ fun BodyHomeMhsView(
     modifier: Modifier = Modifier
 ){
     val coroutineScope = rememberCoroutineScope()
-    val snackbarHostState =  remember { SnackbarHostState }
+    val snackbarHostState =  remember { SnackbarHostState() }
     when{
         homeUiState.isLoading -> {
             Box(

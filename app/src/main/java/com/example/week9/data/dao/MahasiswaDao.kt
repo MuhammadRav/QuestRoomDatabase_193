@@ -15,7 +15,7 @@ interface MahasiswaDao {
     fun getAllMahasiswa(): Flow<List<Mahasiswa>>
 
     @Query("SELECT * FROM mahasiswa WHERE NIM = :nim")
-    fun getMahasiswa(nim: String): Flow<Mahasiswa>
+    fun getMhs(nim: String): Flow<Mahasiswa>
 
     @Delete
     suspend fun deleteMahasiswa(mahasiswa: Mahasiswa)

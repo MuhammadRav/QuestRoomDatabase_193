@@ -40,32 +40,7 @@ import com.example.week9.ui.viewModel.MhsUIState
 import com.example.week9.ui.viewModel.PenyediaViewModel
 import kotlinx.coroutines.launch
 
-@Composable
-fun InsertBodyMhs(
-    modifier: Modifier = Modifier,
-    onValueChange: (MahasiswaEvent) -> Unit,
-    uiState: MhsUIState,
-    onClick: () -> Unit
-){
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        FormMahasiswa(
-            mahasiswaEvent = uiState.mahasiswaEvent,
-            onValueChange = onValueChange,
-            errorState = uiState.isEntryValid,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Button(
-            onClick = onClick,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text("Simpan")
-        }
-    }
-}
+
 
 object DestinasiInsert : AlamatNavigasi{
     override val route: String = "insert_mhs"
@@ -120,6 +95,33 @@ fun InsertMhsView(
                     onNavigate()
                 }
             )
+        }
+    }
+}
+
+@Composable
+fun InsertBodyMhs(
+    modifier: Modifier = Modifier,
+    onValueChange: (MahasiswaEvent) -> Unit,
+    uiState: MhsUIState,
+    onClick: () -> Unit
+){
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        FormMahasiswa(
+            mahasiswaEvent = uiState.mahasiswaEvent,
+            onValueChange = onValueChange,
+            errorState = uiState.isEntryValid,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Button(
+            onClick = onClick,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text("Simpan")
         }
     }
 }

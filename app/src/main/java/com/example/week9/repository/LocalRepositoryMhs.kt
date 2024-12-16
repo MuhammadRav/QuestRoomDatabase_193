@@ -7,13 +7,21 @@ import kotlinx.coroutines.flow.Flow
 class LocalRepositoryMhs(
     private val mahasiswaDao: MahasiswaDao
 ): RepositoryMhs {
-    fun getAllMhs(): Flow<List<Mahasiswa>>
+    override fun getAllMhs(): Flow<List<Mahasiswa>>{
+        return mahasiswaDao.getAllMahasiswa()
+    }
 
-    fun getMhs(nim: String): Flow<Mahasiswa>
+    override fun getMhs(nim: String): Flow<Mahasiswa>{
+        return  mahasiswaDao.getMhs(nim)
+    }
 
-    suspend fun deleteMhs(mahasiswa: Mahasiswa)
+    override suspend fun deleteMhs(mahasiswa: Mahasiswa){
+        mahasiswaDao.deleteMahasiswa(mahasiswa)
+    }
 
-    suspend fun updateMhs(mahasiswa: Mahasiswa)
+    override suspend fun updateMhs(mahasiswa: Mahasiswa){
+        mahasiswaDao.updateMahasiswa(mahasiswa)
+    }
 
     override suspend fun insertMhs(mahasiswa: Mahasiswa) {
         mahasiswaDao.insertMahasiswa(mahasiswa)

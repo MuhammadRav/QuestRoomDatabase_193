@@ -1,10 +1,12 @@
 package com.example.week9.ui.viewModel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.week9.data.entity.Mahasiswa
 import com.example.week9.repository.RepositoryMhs
 import com.example.week9.ui.navigation.DestinasiDetail
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -23,15 +25,16 @@ data class  DetailUiState(
     val isUiEventEmpty: Boolean
         get() = detailUiEvent == MahasiswaEvent()
 
-    val isUiEventEmpty: Boolean
+    val isUiEventNotEmpty: Boolean
         get() = detailUiEvent != MahasiswaEvent()
 }
 
 class DetailMhsViewModel (
-    private val repositoryMhs: RepositoryMhs
+    savedStateHandle: SavedStateHandle,
+    private val repositoryMhs: RepositoryMhs,
 
 ) : ViewModel() {
-    private val nim: String = checkNotNull(savedHandle[DestinasiDetail.NIM])
+    private val _nim: String = checkNotNull(savedStateHandle[DestinasiDetail.NIM])
 
     val detailUiState: StateFlow<DetailUiState> = repositoryMhs.getMhs(_nim)
         .filterNotNull()
