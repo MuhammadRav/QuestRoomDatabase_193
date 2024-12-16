@@ -1,5 +1,19 @@
 package com.example.week9.ui.navigation
 
+object DestinasiHome : AlamatNavigasi {
+    override val route = "home"
+}
+
+object DestinasiDetail : AlamatNavigasi {
+    override val route = "detail"
+    const val NIM = "nim"
+    val routeWithArg = "$route/{%NIM}"
+}
+
+object DestinasiUpdate : AlamatNavigasi {
+    override val route = "update"
+}
+
 interface AlamatNavigasi {
     val route: String
 }
