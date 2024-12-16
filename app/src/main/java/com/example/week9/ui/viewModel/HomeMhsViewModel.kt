@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 data class  HomeUiState(
     val listMhs: List<Mahasiswa> = listOf(),
-    val isLoader: Boolean = false,
+    val isLoading: Boolean = false,
     val isError: Boolean = false,
     val errorMessage: String = ""
 )
