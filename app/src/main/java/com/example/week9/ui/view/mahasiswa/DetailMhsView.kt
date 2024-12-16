@@ -185,7 +185,7 @@ fun ItemDetailMhs(
             ComponentDetailMhs(judul = "Nama", isinya = mahasiswa.nama)
             Spacer(modifier = Modifier.padding(4.dp))
 
-            ComponentDetailMhs(judul = "Alamagt", isinya = mahasiswa.alamat)
+            ComponentDetailMhs(judul = "Alamat", isinya = mahasiswa.alamat)
             Spacer(modifier = Modifier.padding(4.dp))
 
             ComponentDetailMhs(judul = "Jenis Kelamin", isinya = mahasiswa.jenisKelamin)
@@ -225,7 +225,8 @@ fun ComponentDetailMhs(
     }
 }
 
-@Composable private fun DeleteConfirmationDialog(
+@Composable
+private fun DeleteConfirmationDialog(
     onDeleteConfirm: () -> Unit,
     onDeleteCancel: () -> Unit,
     modifier: Modifier = Modifier
