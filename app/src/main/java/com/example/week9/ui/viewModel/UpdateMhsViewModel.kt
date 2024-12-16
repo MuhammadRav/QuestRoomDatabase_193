@@ -1,77 +1,85 @@
 package com.example.week9.ui.viewModel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.week9.data.entity.Mahasiswa
 import com.example.week9.repository.RepositoryMhs
-import com.example.week9.ui.navigation.DestinasiDetail
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-data class  DetailUiState(
-    val detailUiEvent: MahasiswaEvent = MahasiswaEvent(),
-    val isLoading: Boolean = false,
-    val isError: Boolean = false,
-    val errorMessage: String = ""
-){
-    val isUiEventEmpty: Boolean
-        get() = detailUiEvent == MahasiswaEvent()
-
-    val isUiEventEmpty: Boolean
-        get() = detailUiEvent != MahasiswaEvent()
-}
-
-class DetailMhsViewModel (
+class UpdateMhsViewModel (
+    savedStateHandle: SavedStateHandle,
     private val repositoryMhs: RepositoryMhs
+): ViewModel(){
+    var updateUIState by mutableStateOf(MhsUIState())
+        private set
 
-) : ViewModel() {
-    private val nim: String = checkNotNull(savedHandle[DestinasiDetail.NIM])
+    private val _nim: String = checkNotNull(savedStateHandle[DestinasiEdit.NIM])
 
-    val detailUiState: StateFlow<DetailUiState> = repositoryMhs.getMhs(_nim)
-        .filterNotNull()
-        .map {
-            DetailUiState(
-                detailUiEvent = it.toDetailUiEvent(),
-                isLoading = false,
-            )
+    init{
+        viewModelScope.launch {
+            updateUIState = repositoryMhs.getMhs(_nim)
+                .filterNotNull()
+                .first()
+                .toUiStateMhs()
         }
-        .onStart {
-            emit(DetailUiState(isLoading = true))
-            delay(600)
-        }
-        .catch {
-            emit(
-                DetailUiState(
-                    isLoading = false,
-                    isError = true,
-                    errorMessage = it.message ?: "Terjadi kesalahan"
-                )
-            )
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(2000),
-            initialValue = DetailUiState(
-                isLoading = true,
-            ),
+    }
+
+    fun updateState(mahasiswaEvent: MahasiswaEvent){
+        updateUIState = updateUIState.copy(
+            mahasiswaEvent = mahasiswaEvent,
         )
-    fun deleteMhs(){
-        detailUiState.value.detailUiEvent.toMahasiswaEntity().let{
+    }
+
+    fun validateFields(): Boolean{
+        val event = updateUIState.mahasiswaEvent
+        val errorState = FormErrorState(
+            nim = if (event.nim.isNotEmpty()) null else "NIM tidak boleh kosong",
+            nama = if (event.nama.isNotEmpty()) null else "Nama tidak boleh kosong",
+            jenisKelamin = if (event.jenisKelamin.isNotEmpty()) null else "Jenis Kelamin tidak boleh kosong",
+            alamat = if (event.alamat.isNotEmpty()) null else "Alamat tidak boleh kosong",
+            kelas = if (event.kelas.isNotEmpty()) null else "Kelas tidak boleh kosong",
+            angkatan = if (event.angkatan.isNotEmpty()) null else "Angkatan tidak boleh kosong"
+            )
+        updateUIState = updateUIState.copy(isEntryValid = errorState)
+        return errorState.isValid()
+    }
+
+    fun UpdateData(){
+        val currentEvent = updateUIState.mahasiswaEvent
+
+        if (validateFields()) {
             viewModelScope.launch {
-                repositoryMhs.deleteMhs(it)
+                try {
+                    repositoryMhs.updateMhs(currentEvent.toMahasiswaEntity())
+                    updateUIState = updateUIState.copy(
+                        snackBarMessage = "Data berhasil diupdate",
+                        mahasiswaEvent = MahasiswaEvent(),
+                        isEntryValid = FormErrorState()
+                    )
+                    println("snackBarMessage diatur: ${updateUIState.
+                    snackBarMessage}")
+                } catch (e: Exception){
+                    updateUIState = updateUIState.copy(
+                        snackBarMessage = "Data gagal diupdate"
+                    )
+                }
             }
+        } else{
+            updateUIState = updateUIState.copy(
+                snackBarMessage = "Data gagal diupdate"
+            )
         }
+    }
+
+    fun resetSnackBarMessage(){
+        updateUIState = updateUIState.copy(snackBarMessage = null)
     }
 }
 
-fun Mahasiswa.toDetailUiEvent(): MahasiswaEvent {
-    return MahasiswaEvent(
-        nim = nim,
-        nama = nama,
-        jenisKelamin = jenisKelamin,
-        alamat = alamat,
-        kelas = kelas,
-        angkatan = angkatan
-    )
-}
+fun Mahasiswa.toUiStateMhs(): MhsUIState = MhsUIState(
+    mahasiswaEvent = this.toDetailUiEvent(),
+
+)
